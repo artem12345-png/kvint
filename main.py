@@ -3,21 +3,26 @@ from fastapi.responses import Response
 import uvicorn
 from transitions import Machine
 
-app = FastAPI()
+
+def init_app():
+    app = FastAPI()
+    return app
+
+
+def run():
+    app = init_app()
+    uvicorn.run(app, host='127.0.0.1', port=9999)
+    return app
+
+
+app = run()
 
 ids = {}
-
 states = ['choice_size', 'choice_pay', 'check', 'bb']
 
 
-@app.get('/send_msg/{msg}/{id}')
+@app.get('/send_msg/{msg}/{_id}')
 def send_msg(msg: str, _id: int) -> Response:
-    """
-    .jbdzvjbdzv
-    :param msg:
-    :param _id:
-    :return:
-    """
 
     class Offer(object):
         pass
@@ -76,11 +81,3 @@ def send_msg(msg: str, _id: int) -> Response:
         ids[_id] = ['', '', '']
         ids[_id][0] = state
         return Response(speach['choice_size'])
-
-
-def run():
-    uvicorn.run(app, host='127.0.0.1', port=9999)
-
-
-if __name__ == '__main__':
-    run()
