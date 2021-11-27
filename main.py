@@ -1,29 +1,27 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.responses import Response
 import uvicorn
 from transitions import Machine
 
 
-def init_app():
-    app = FastAPI()
-    return app
+router = APIRouter()
 
 
-def run():
-    app = init_app()
-    uvicorn.run(app, host='127.0.0.1', port=9999)
-    return app
 
 
-app = run()
 
 ids = {}
 states = ['choice_size', 'choice_pay', 'check', 'bb']
 
 
-@app.get('/send_msg/{msg}/{_id}')
-def send_msg(msg: str, _id: int) -> Response:
+@router.get('/self_check')
+def self_check():
+    pass
+    return {'STATUS': 'OK'}
 
+
+@router.get('/send_msg/{msg}/{_id}')
+def send_msg(msg: str, _id: int) -> Response:
     class Offer(object):
         pass
 
@@ -32,7 +30,7 @@ def send_msg(msg: str, _id: int) -> Response:
     speach = {
         'choice_size': 'Какую вы хотите пиццу? Большую или маленькую?',
         'choice_pay': 'Как вы будете оплачивать?',
-        'check': f"Вы хотите {ids.get(_id, '   ')[size-2]} пиццу, оплата - {ids.get(_id, '   ')[size-1]}",
+        'check': f"Вы хотите {ids.get(_id, '   ')[size - 2]} пиццу, оплата - {ids.get(_id, '   ')[size - 1]}",
         'bb': 'Спасибо за заказ'
     }
 
@@ -81,3 +79,19 @@ def send_msg(msg: str, _id: int) -> Response:
         ids[_id] = ['', '', '']
         ids[_id][0] = state
         return Response(speach['choice_size'])
+
+
+def init_app():
+    app = FastAPI()
+
+    app.include_router(router)
+    return app
+
+
+def run():
+    app = init_app()
+    uvicorn.run(app, host='127.0.0.1', port=4444)
+
+
+if __name__ == '__main__':
+    run()

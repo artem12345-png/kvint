@@ -11,8 +11,6 @@ bot = telebot.TeleBot(token)
 def content_messages(message):
     msg = message.json
     response = httpx.get(f"http://127.0.0.1:9999/send_msg/{msg.get('text', '')}/{msg.get('chat', '').get('id')}")
-#    print(message.json)#['chat']['text'])
-    print(response.text)
     bot.send_message(message.from_user.id, response.text)
 
 
